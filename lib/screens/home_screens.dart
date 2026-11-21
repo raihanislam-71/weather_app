@@ -1,10 +1,39 @@
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:weather_app/bloc/weather_bloc_bloc.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Widget getWeatherIcon(int code) {
+    switch (code) {
+      case >= 200 && < 300:
+        return Image.asset('assets/1.png');
+      case >= 300 && < 400:
+        return Image.asset('assets/2.png');
+      case >= 500 && < 600:
+        return Image.asset('assets/3.png');
+      case >= 600 && < 700:
+        return Image.asset('assets/4.png');
+      case >= 700 && < 800:
+        return Image.asset('assets/5.png');
+      case == 800:
+        return Image.asset('assets/6.png');
+      case > 800 && <= 804:
+        return Image.asset('assets/7.png');
+      default:
+        return Image.asset('assets/7.png');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,150 +47,173 @@ class HomeScreen extends StatelessWidget {
           statusBarBrightness: Brightness.dark,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsetsGeometry.fromLTRB(
-          40,
-          1.2 * kToolbarHeight,
-          40,
-          20,
-        ),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: [
-              Align(
-                alignment: AlignmentDirectional(3, -0.3),
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.deepPurple,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsetsGeometry.fromLTRB(
+            40,
+            1.2 * kToolbarHeight,
+            40,
+            20,
+          ),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: AlignmentDirectional(3, -0.3),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.deepPurple,
+                    ),
                   ),
                 ),
-              ),
-              Align(
-                alignment: AlignmentDirectional(-3, -0.3),
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xFF673AB7),
+                Align(
+                  alignment: AlignmentDirectional(-3, -0.3),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFF673AB7),
+                    ),
                   ),
                 ),
-              ),
-              Align(
-                alignment: AlignmentDirectional(0, -1.2),
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xFFFFAB40),
+                Align(
+                  alignment: AlignmentDirectional(0, -1.2),
+                  child: Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFFFFAB40),
+                    ),
                   ),
                 ),
-              ),
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 100.0, sigmaY: 100.0),
-                child: Container(
-                  decoration: const BoxDecoration(color: Colors.transparent),
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 100.0, sigmaY: 100.0),
+                  child: Container(
+                    decoration: const BoxDecoration(color: Colors.transparent),
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '📍 Bangladesh',
-                      style: TextStyle(color: Colors.white, fontWeight: .w300),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Good Morning',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: .bold,
-                      ),
-                    ),
-                    Image.asset('assets/1.png'),
 
-                    const Center(
-                      child: Text(
-                        '21°C',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 55,
-                          fontWeight: .w600,
-                        ),
-                      ),
-                    ),
+                BlocBuilder<WeatherBlocBloc, WeatherBlocState>(
+                  builder: (context, state) {
+                    if (state is WeatherBlocSuccess) {
+                      return SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '📍 ${state.weather.areaName}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: .w300,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Good Morning',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 25,
+                                fontWeight: .bold,
+                              ),
+                            ),
+                            
+                            getWeatherIcon(state.weather.weatherConditionCode!),
 
-                    const Center(
-                      child: Text(
-                        'THUNDERSTORM',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 25,
-                          fontWeight: .w500,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Center(
-                      child: Text(
-                        'Friday 16  09.41am',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: .w300,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 30),
+                            Center(
+                              child: Text(
+                                '${state.weather.temperature!.celsius!.round()}°C',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 55,
+                                  fontWeight: .w600,
+                                ),
+                              ),
+                            ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildWeatherInfoRow(
-                          iconPath: 'assets/11.png',
-                          label: 'Sunrise',
-                          time: '5.30 am',
-                        ),
-                        _buildWeatherInfoRow(
-                          iconPath: 'assets/12.png',
-                          label: 'Sunset',
-                          time: '5.30 pm',
-                        ),
-                      ],
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5.0),
-                      child: Divider(color: Colors.grey),
-                    ),
+                            Center(
+                              child: Text(
+                                state.weather.weatherMain!.toUpperCase(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  fontWeight: .w500,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Center(
+                              child: Text(
+                                DateFormat('EEEE  dd ')
+                                    .add_jm()
+                                    .format(state.weather.date!),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: .w300,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 30),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildWeatherInfoRow(
-                          iconPath: 'assets/13.png',
-                          label: 'Temp Max',
-                          time: '12°C',
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildWeatherInfoRow(
+                                  iconPath: 'assets/11.png',
+                                  label: 'Sunrise',
+                                  time: DateFormat().add_jm().format(
+                                    state.weather.sunrise!,
+                                  ),
+                                ),
+                                _buildWeatherInfoRow(
+                                  iconPath: 'assets/12.png',
+                                  label: 'Sunset',
+                                  time: DateFormat().add_jm().format(
+                                    state.weather.sunset!,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5.0),
+                              child: Divider(color: Colors.grey),
+                            ),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildWeatherInfoRow(
+                                  iconPath: 'assets/13.png',
+                                  label: 'Temp Max',
+                                  time:
+                                      '${state.weather.tempMax!.celsius!.round()} °C',
+                                ),
+                                _buildWeatherInfoRow(
+                                  iconPath: 'assets/14.png',
+                                  label: 'Temp Min',
+                                  time:
+                                      '${state.weather.tempMin!.celsius!.round()} °C',
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        _buildWeatherInfoRow(
-                          iconPath: 'assets/14.png',
-                          label: 'Temp Min',
-                          time: '8°C',
-                        ),
-                      ],
-                    ),
-                  ],
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -180,12 +232,12 @@ class HomeScreen extends StatelessWidget {
           children: [
             Text(
               label,
-              style: TextStyle(color: Colors.white, fontWeight: .w300),
+              style: const TextStyle(color: Colors.white, fontWeight: .w300),
             ),
-            SizedBox(height: 3),
+            const SizedBox(height: 3),
             Text(
               time,
-              style: TextStyle(color: Colors.white, fontWeight: .w700),
+              style: const TextStyle(color: Colors.white, fontWeight: .w700),
             ),
           ],
         ),
