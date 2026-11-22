@@ -25,13 +25,25 @@ class _HomeScreenState extends State<HomeScreen> {
       case >= 600 && < 700:
         return Image.asset('assets/4.png');
       case >= 700 && < 800:
-        return Image.asset('assets/5.png');
+        return Image.asset('assets/5.1.png');
       case == 800:
         return Image.asset('assets/6.png');
       case > 800 && <= 804:
         return Image.asset('assets/7.png');
       default:
         return Image.asset('assets/7.png');
+    }
+  }
+
+  String getGreeting(int hour) {
+    if (hour >= 5 && hour < 12) {
+      return 'Good Morning';
+    } else if (hour >= 12 && hour < 16) {
+      return 'Good Afternoon';
+    } else if (hour >= 16 && hour < 20) {
+      return 'Good Evening';
+    } else {
+      return 'Good Night';
     }
   }
 
@@ -117,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             SizedBox(height: 8),
                             Text(
-                              'Good Morning',
+                              getGreeting(state.weather.date!.hour),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 25,
