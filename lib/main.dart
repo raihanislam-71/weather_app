@@ -6,7 +6,18 @@ import 'package:weather_app/bloc/weather_bloc_bloc.dart';
 import 'package:weather_app/screens/home_screens.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    // The .env asset isn't bundled (forgot `flutter pub get` after adding it
+    // to pubspec.yaml > flutter: assets) or the file is missing.
+    // The app still starts, but weather API calls will fail until a valid
+    // .env is provided.
+    debugPrint('dotenv.load error: $e');
+  }
+
   runApp(const MyApp());
 }
 
@@ -27,7 +38,7 @@ class MyApp extends StatelessWidget {
               child: const HomeScreen(),
             );
           } else {
-            return const Scaffold(
+            return Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
